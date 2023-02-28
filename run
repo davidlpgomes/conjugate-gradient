@@ -1,0 +1,60 @@
+#!/bin/bash
+
+ns=(32 64 128 256 512 1000 2000 4000 8000)
+p=1
+i=150
+k=7
+o=output.txt
+
+echo 'N,TIME,L2_MISS_RATIO,L3_BANDWIDTH,FLOPS_DP,FLOPS_AVX' > op1.csv
+echo 'N,TIME,L2_MISS_RATIO,L3_BANDWIDTH,FLOPS_DP,FLOPS_AVX' > op2.csv
+
+for n in ${ns[@]}
+do
+    echo $(date)
+    echo "Running tests for N=$n"
+
+    # Write N to CSVs
+    echo -n "$n," >> op1.csv
+    echo -n "$n," >> op2.csv
+
+    # Run experiments
+    l2out="$(./perfctr 3 L2CACHE ./cgSolver -n $n -k $k -p $p -i $i -o $o)"
+    l3out="$(./perfctr 3 L3 ./cgSolver -n $n -k $k -p $p -i $i -o $o)"
+    flopsout="$(./perfctr 3 FLOPS_DP ./cgSolver -n $n -k $k -p $p -i $i -o $o)"
+
+    # Write logs
+    echo "$l2out" > "Resultados/L2CACHE_$n.log"
+    echo "$l3out" > "Resultados/L3_$n.log"
+    echo "$flopsout" > "Resultados/FLOPS_DP_$n.log"
+
+    # Write TIME to CSVs
+    time="$(echo "$l2out" | grep 'TIME-OP1' | cut -d ':' -f 2)"
+    echo -n "$time," >> op1.csv
+    time="$(echo "$l2out" | grep 'TIME-OP2' | cut -d ':' -f 2)"
+    echo -n "$time," >> op2.csv
+
+    # Write L2 miss ratio to CSVs
+    missratio="$(echo "$l2out" | grep 'miss ratio' | tr -d '|' | cut -d 'o' -f 2 | tr -d ' ' | sed -n '1p')"
+    echo -n "$missratio," >> op1.csv
+    missratio="$(echo "$l2out" | grep 'miss ratio' | tr -d '|' | cut -d 'o' -f 2 | tr -d ' ' | sed -n '2p')"
+    echo -n "$missratio," >> op2.csv
+
+    # Write L3 bandwidth to CSVs
+    bandwidth="$(echo "$l3out" | grep 'L3 bandwidth' | tr -d '| ' | cut -d']' -f2 | sed -n '1p')"
+    echo -n "$bandwidth," >> op1.csv
+    bandwidth="$(echo "$l3out" | grep 'L3 bandwidth' | tr -d '| ' | cut -d']' -f2 | sed -n '2p')"
+    echo -n "$bandwidth," >> op2.csv
+
+    # Write FLOPS DP to CSVs
+    dp="$(echo "$flopsout" | grep 'DP MFLOP/s' | grep -v 'AVX' | tr -d '| ' | cut -d's' -f2 | sed -n '1p')"
+    echo -n "$dp," >> op1.csv
+    dp="$(echo "$flopsout" | grep 'DP MFLOP/s' | grep -v 'AVX' | tr -d '| ' | cut -d's' -f2 | sed -n '2p')"
+    echo -n "$dp," >> op2.csv
+
+    # Write FLOPS AVX to CSVs
+    avx="$(echo "$flopsout" | grep 'AVX DP MFLOP/s' | tr -d '| ' | cut -d's' -f2 | sed -n '1p')"
+    echo "$avx" >> op1.csv
+    avx="$(echo "$flopsout" | grep 'AVX DP MFLOP/s' | tr -d '| ' | cut -d's' -f2 | sed -n '2p')"
+    echo "$avx" >> op2.csv
+done
