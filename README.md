@@ -7,12 +7,13 @@ Run `make`.
 
 ## Usage
 ``` 
-usage: ./cgSolver -n N -k K -p P -i I [-e E]
+usage: ./cgSolver -n N -k K -p P -i I [-e E] -o O
 
 options:
-  -n N                  N = size of the linear system (N x N). It must be bigger than 11
-  -k K                  K = number of diagonals, it must be odd, at least 1 and at most N
-  -p P                  P = 0 for conjugate gradient without preconditioning, any other number for Jacobi preconditioner
-  -i I                  I = max iterations
-  -e E                  E = minimum error to finish iterations (optional)
+  -n N         N = size of the linear system (N x N). It must be bigger than 11
+  -k K         K = number of diagonals, it must be odd, at least 1 and at most N
+  -p P         P = 0 for conjugate gradient without preconditioning, any other number for Jacobi preconditioner
+  -i I         I = max iterations
+  -e E         E = minimum error to finish iterations (optional)
+  -o O         O = output file
 ```
