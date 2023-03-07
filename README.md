@@ -17,3 +17,6 @@ options:
   -e E         E = minimum error to finish iterations (optional)
   -o O         O = output file
 ```
+
+## Testing
+The `run` shell script runs the algorithm on multiple sizes of linear system, while calculates the time spent, miss ratio on the L2 cache, bandwidth of the L3 cache, double precision MFLOP/s and AVX MFLOP/s, using [LIKWID](https://github.com/RRZE-HPC/likwid). Then, saves the results on CSVs, which can be used on the `plot.py` script to compare the algorithm performance with and without optimizations.
