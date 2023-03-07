@@ -1,6 +1,6 @@
 # Conjugate Gradient
 
-An implementation of the conjugate gradient method for solving of sparse linear systems. It solves the systems with or without the Jacobi's preconditioning.
+An implementation of the conjugate gradient method for solving sparse linear system. It solves it with or without the Jacobi preconditioner. The `without_optimizations` directory has the code without the optimizations implemented on the main code, such as loop unroll, which allows the compiler to use SIMD instruction and the XMM/YMM registers.
 
 ## Build
 Run `make`.
